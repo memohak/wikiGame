@@ -24,11 +24,45 @@
     }
 
     function printGame(){
-    	echo "Source = ".$_SESSION['source']." destination = ".$_SESSION['destination'];
-    	echo "<div name='timer'> Time Elapsed = ".getTimeDiffInSec()."</div><br>";
+    	echo "Source = ".$_SESSION['source']." destination = ".$_SESSION['destination'].$_SESSION['currentPage'];
+    	echo "<div id='timer'> Time Elapsed = ".getTimeDiffInSec()."</div><br>";
+    }
+
+    function addLinks($from, $add, $where){
+        $lastPos = 0;
+        while (($lastPos = strpos($from, $where, $lastPos))!== false) {
+            $from = substr_replace($from, $add, $lastPos+6,0);
+            $lastPos = $lastPos + strlen($add);
+        }
+        return $from;
     }
     
-
+    function loadCurrentPage($page){
+        echo '<div id = "gamePage">';
+        $url = "https://en.wikipedia.org".$page;
+        $html = new simple_html_dom();
+        $main = file_get_html($url);
+        $outgoingLinks = array();
+        foreach ($main->find('a') as $key) {
+            if(strpos($key->href, "/wiki/")===0
+                &&strpos($key->href, ":")===false
+                &&$key->plaintext!=''
+                &&$key->plaintext!='Read'
+                &&$key->plaintext!='Main page'
+                &&$key->plaintext!='Article'
+                &&$key->plaintext!='Main Page'
+                &&$key->plaintext!='free'
+                &&$key->plaintext!='Full Article...'
+                &&$key->plaintext!='Full article...'
+                &&$key->plaintext!='Wikipedia'){
+                array_push($outgoingLinks, $key->href);
+            }
+        }
+        $_SESSION['outgoingLinks'] = $outgoingLinks;
+        $main = addLinks($main, "authenticatePage.php?click=","href=\"/wiki/");
+        $main = addLinks($main, "https://en.wikipedia.org","href=\"/");
+        echo '<br><br>'.$main.'</div>';
+    }
 
 
 ?>

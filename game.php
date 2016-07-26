@@ -8,17 +8,34 @@
 	<?php
 		session_start();
 		include_once('gameUtils.php');
-		printGame();
-		$url = "https://en.wikipedia.org".$_SESSION['currentPage'];
-		echo "<iframe id=\"iframe\" src=\"".$url."\" width=\"1270dp\" height=\"600dp\"></iframe>";
-	
-	?>
-	<script type="text/javascript">
-		$('#iframe').load(function() {
-		  alert("the iframe has been loaded");
-		});
-	</script>
+		if($_SESSION['currentPage']===$_SESSION['destination']){
+			echo 
 
+			"
+			<script type=\"text/javascript\">
+				alert(\"Voila You Won\");
+			</script>
+			";
+		}
+		printGame();
+		//loadCurrentPage("/wiki/Main_Page");
+		loadCurrentPage($_SESSION['currentPage']);
+	?>
+
+	<script type="text/javascript">
+		 $("#gamePage a").click(function () {
+	        var addressValue = $(this).attr("href");
+	        if(addressValue.indexOf("https://en.wikipedia.org/wiki/")==0){
+	        	alert(addressValue);
+	        }else{
+
+	        }
+	    });
+
+		 function gameWon(){
+		 	alert("Voila");
+		 }
+	</script>
 
 </body>
 </html>
